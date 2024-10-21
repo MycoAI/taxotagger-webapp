@@ -1,6 +1,6 @@
 # TaxoTagger Webapp
 
-![taxotagger-webapp](images/TaxoTagger-Webapp.gif)
+![taxotagger-webapp](images/TaxoTagger-webapp.gif)
 
 
 ## Installation
