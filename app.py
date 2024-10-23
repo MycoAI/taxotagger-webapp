@@ -18,11 +18,12 @@ st.set_page_config(
 )
 
 # Title
-col1, col2 = st.columns([1, 10], vertical_alignment="bottom")
+col1, col2 = st.columns([1, 6], vertical_alignment="bottom")
 with col1:
-    st.image(LOGO_IMAGE, width=50)
+    st.image(LOGO_IMAGE, width=90)
 with col2:
     st.title("Taxonomy Tagger")
+    st.markdown("*Taxonomy identification, powered by AI and Semantic Search*")
 
 
 # Initialize TaxoTagger
