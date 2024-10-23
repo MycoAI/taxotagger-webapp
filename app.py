@@ -237,27 +237,6 @@ if "results_by_seq" in st.session_state:
     df.index = [f"Top {i+1}" for i in range(top_n)]
     st.dataframe(df)
 
-    # Download all results as CSV
-    all_results = [item for sublist in results_by_seq.values() for item in sublist]
-    df_all = pd.DataFrame(all_results)
-    df_all = df_all.map(lambda x: x.split("<br>")[0] if isinstance(x, str) else x)
-
-    # Reorder columns
-    df_all = df_all.reindex(
-        columns=["QuerySequenceID", "TopHit"] + list(df_all.columns)
-    )
-    df_all["QuerySequenceID"] = [
-        seq_id for seq_id in results_by_seq for _ in range(top_n)
-    ]
-    df_all["TopHit"] = [i + 1 for i in range(top_n)] * len(results_by_seq)
-
-    csv = df_all.to_csv(index=False)
-    st.download_button(
-        label="Download results as CSV",
-        data=csv,
-        file_name="taxotagger_results.csv",
-        mime="text/csv",
-    )
 
 # Footer
 st.markdown(
