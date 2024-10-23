@@ -206,7 +206,7 @@ if st.button("Run TaxoTagger", type="primary", use_container_width=True):
                     value = match["entity"].get(level, "")
                     if value:
                         result[level.capitalize()] = (
-                            f"{value}<br><span style='color: grey; font-size: 0.8em;'>ID: {match['id']}<br>COS: {match['distance']:.3f}</span>"
+                            f"{value}\n({match['id']};{match['distance']:.3f})"
                         )
                     else:
                         result[level.capitalize()] = ""
@@ -222,7 +222,10 @@ if "results_by_seq" in st.session_state:
     # Display results for the selected sequence
     st.subheader(
         "Results",
-        help="In the results, ID is the ID of matched sequence, COS is cosine similarity (range from 0 to 1)",
+        help="""The predicted taxonomy labels for each input DNA sequence are displayed below
+            with a format of 'TaxonomyLabel (ID;COS)' in each cell. Where, 'ID' is the ID of the
+            matched DNA sequence, and 'COS' is the cosine similarity between the input DNA sequence
+            and the matched DNA sequence, ranging from 0 (no match) to 1 (perfect match).""",
     )
     selected_seq_id = st.selectbox(
         "For input sequence:",
@@ -232,7 +235,7 @@ if "results_by_seq" in st.session_state:
     df = pd.DataFrame(results_by_seq[selected_seq_id])
     top_n = len(df)
     df.index = [f"Top {i+1}" for i in range(top_n)]
-    st.write(df.to_html(escape=False), unsafe_allow_html=True)
+    st.dataframe(df)
 
     # Download all results as CSV
     all_results = [item for sublist in results_by_seq.values() for item in sublist]
