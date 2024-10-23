@@ -173,7 +173,7 @@ if st.button("Run TaxoTagger", type="primary", use_container_width=True):
         st.error("Please provide FASTA input before running the analysis.", icon="💡")
         st.stop()
 
-    results = process_fasta_and_run(fasta_content)
+    results = process_fasta_and_run(st.session_state["fasta_content"])
     seq_ids = st.session_state["seq_ids"]
 
     # Check if the number of results matches the number of input sequences
