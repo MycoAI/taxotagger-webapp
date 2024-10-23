@@ -83,6 +83,7 @@ def validate_input(fasta_content):
         )
 
     st.session_state["seq_ids"] = seq_ids
+    st.session_state["fasta_content"] = fasta_content
 
 
 st.subheader("Enter DNA Sequence")
@@ -101,7 +102,6 @@ if input_method == "Enter FASTA text":
     )
     if fasta_content:
         validate_input(fasta_content)
-        st.session_state["fasta_content"] = fasta_content
 
 else:
     uploaded_files = st.file_uploader(
@@ -116,7 +116,6 @@ else:
             file_content = uploaded_file.getvalue().decode() + "\n"
             fasta_content += file_content
         validate_input(fasta_content)
-        st.session_state["fasta_content"] = fasta_content
 
 # Configure settings
 st.subheader("Settings")
