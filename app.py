@@ -92,6 +92,7 @@ input_method = st.radio(
     ["Upload FASTA file(s)", "Enter FASTA text"],
     horizontal=True,
     label_visibility="collapsed",
+    on_change=st.session_state.clear,
 )
 
 if input_method == "Enter FASTA text":
@@ -102,6 +103,8 @@ if input_method == "Enter FASTA text":
     )
     if fasta_content:
         validate_input(fasta_content)
+    else:
+        st.session_state.clear()
 
 else:
     uploaded_files = st.file_uploader(
@@ -116,6 +119,8 @@ else:
             file_content = uploaded_file.getvalue().decode() + "\n"
             fasta_content += file_content
         validate_input(fasta_content)
+    else:
+        st.session_state.clear()
 
 # Configure settings
 st.subheader("Settings")
