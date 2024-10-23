@@ -112,7 +112,8 @@ else:
     if uploaded_files:
         fasta_content = ""
         for uploaded_file in uploaded_files:
-            file_content = uploaded_file.getvalue().decode()
+            # "/n" is needed to ensure the last sequence is not concatenated with the next one
+            file_content = uploaded_file.getvalue().decode() + "\n"
             fasta_content += file_content
         validate_input(fasta_content)
         st.session_state["fasta_content"] = fasta_content
