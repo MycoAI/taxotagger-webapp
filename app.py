@@ -205,19 +205,24 @@ if st.button("Run TaxoTagger", type="primary", use_container_width=True):
         results_by_seq[seq_id] = []
         for j in range(st.session_state["top_n"]):
             result = {}
+            result["Sequence_ID"] = seq_id
+            result["Rank"] = j + 1
             for level in TAXONOMY_LEVELS:
+                level_cap = level.capitalize()
                 try:
                     match = results[level][i][j]
                     value = match["entity"].get(level, "")
                     if value:
-                        result[level.capitalize()] = (
-                            f"{value}\n({match['id']};{match['distance']:.3f})"
-                        )
+                        result[level_cap] = value
+                        result[level_cap + "_Hit"] = match["id"]
+                        result[level_cap + "_Similarity"] = match["distance"]
                     else:
-                        result[level.capitalize()] = ""
+                        result[level_cap] = ""
+                        result[level_cap + "_Hit"] = ""
+                        result[level_cap + "_Similarity"] = ""
                 except IndexError:
                     # Handle the case where there are fewer results than expected
-                    result[level.capitalize()] = "No match found"
+                    result[level_cap] = "No match found"
             results_by_seq[seq_id].append(result)
     st.session_state["results_by_seq"] = results_by_seq
 
