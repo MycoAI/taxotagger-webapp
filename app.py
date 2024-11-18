@@ -1,5 +1,6 @@
 import os
 import tempfile
+from datetime import datetime
 
 import pandas as pd
 import streamlit as st
@@ -257,6 +258,20 @@ if "results_by_seq" in st.session_state:
         )
         df = df.drop(columns=[level_cap + "_Hit", level_cap + "_Similarity"])
     st.dataframe(df)
+
+    # Combine results of all sequences for download
+    combined_results = []
+    for seq_id in results_by_seq:
+        combined_results.extend(results_by_seq[seq_id])
+    combined_df = pd.DataFrame(combined_results)
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
+    file_name = f"taxotagger_results_{timestamp}.csv"
+    st.download_button(
+        label="Download all results",
+        data=combined_df.to_csv(index=False),
+        file_name=file_name,
+        mime="text/csv",
+    )
 
 
 # Footer
