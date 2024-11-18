@@ -243,8 +243,19 @@ if "results_by_seq" in st.session_state:
     )
 
     df = pd.DataFrame(results_by_seq[selected_seq_id])
-    top_n = len(df)
-    df.index = [f"Top {i+1}" for i in range(top_n)]
+    df = df.drop(columns=["Sequence_ID"])  # Drop the sequence ID column
+    df.set_index("Rank", inplace=True)  # Set the rank as the index
+    for level in TAXONOMY_LEVELS:  # combine taxonomy label with the hit and similarity
+        level_cap = level.capitalize()
+        df[level_cap] = (
+            df[level_cap]
+            + " ("
+            + df[level_cap + "_Hit"]
+            + ";"
+            + df[level_cap + "_Similarity"].round(3).astype(str)
+            + ")"
+        )
+        df = df.drop(columns=[level_cap + "_Hit", level_cap + "_Similarity"])
     st.dataframe(df)
 
 
