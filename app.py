@@ -50,7 +50,17 @@ def validate_input(fasta_content):
         st.stop()
 
     seq_ids = []
-    for header in header_seq_dict:
+    seq_header_dict = {}
+    for header, seq in header_seq_dict.items():
+        # empty header
+        if not header:
+            st.error(
+                "Invalid FASTA header(s) found. Please ensure that each header starts with '>' plus at least one more non-empty character.",
+                icon="⚠️",
+            )
+            st.stop()
+
+        # duplicate ID
         seq_id = parse_unite_fasta_header(header)[0]
         if seq_id not in seq_ids:
             seq_ids.append(seq_id)
@@ -61,19 +71,25 @@ def validate_input(fasta_content):
             )
             st.stop()
 
+        # empty sequence
+        if not seq:
+            st.error(
+                f"Empty sequence found for: `{header}`. Please ensure all sequences are non-empty.",
+                icon="⚠️",
+            )
+            st.stop()
+
+        # duplicate sequence
+        if seq in seq_header_dict:
+            st.error(
+                f"`{header}` and `{seq_header_dict[seq]}` have the same DNA sequence. Please ensure all sequences are unique.",
+                icon="⚠️",
+            )
+            st.stop()
+        else:
+            seq_header_dict[seq] = header
+
     num_seqs = len(header_seq_dict)
-    num_valid_headers = 0
-    for header in header_seq_dict:
-        if len(header) > 1:
-            num_valid_headers += 1
-
-    if num_valid_headers != num_seqs:
-        st.error(
-            "Invalid FASTA header(s) found. Please ensure that each header starts with '>' plus at least one more non-empty character.",
-            icon="⚠️",
-        )
-        st.stop()
-
     if num_seqs > 100:
         st.error("Please limit the number of sequences to 100 or fewer.", icon="⚠️")
         st.stop()
@@ -184,21 +200,9 @@ if st.button("Run TaxoTagger", type="primary", use_container_width=True):
     # Check if the number of results matches the number of input sequences
     if len(results[TAXONOMY_LEVELS[0]]) != len(seq_ids):
         st.error(
-            f"Mismatch between number of input sequences ({len(seq_ids)}) and results ({len(results[TAXONOMY_LEVELS[0]])}). Some sequences may not have been processed.",
+            f"Mismatch between number of input sequences ({len(seq_ids)}) and results ({len(results[TAXONOMY_LEVELS[0]])}).",
             icon="⚠️",
         )
-        # Identify unprocessed sequences
-        processed_ids = set()
-        for level in TAXONOMY_LEVELS:
-            for result_list in results[level]:
-                for result in result_list:
-                    if "id" in result:
-                        processed_ids.add(result["id"])
-        unprocessed_ids = set(seq_ids) - processed_ids
-        if unprocessed_ids:
-            st.warning("The following sequences were not processed:")
-            for unprocessed_id in unprocessed_ids:
-                st.write(f"- {unprocessed_id}")
 
     # Process results
     results_by_seq = {}
